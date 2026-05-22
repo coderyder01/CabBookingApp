@@ -1,0 +1,19 @@
+server:
+  port: 8085
+grpc:
+  server:
+    port: 9095
+spring:
+  application:
+    name: notification-service
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
