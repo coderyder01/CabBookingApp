@@ -1,0 +1,125 @@
+syntax = "proto3";
+
+package rides;
+
+option java_multiple_files = true;
+option java_package = "com.example.rides.grpc";
+option java_outer_classname = "RideHailingProto";
+
+service LocationGrpcService {
+  rpc FindNearbyDrivers(NearbyDriversRequest) returns (NearbyDriversResponse);
+}
+
+service SurgeGrpcService {
+  rpc RecordDemand(SurgeDemandRequest) returns (SurgeQuoteResponse);
+  rpc GetSurgeQuote(SurgeQuoteRequest) returns (SurgeQuoteResponse);
+}
+
+service TripGrpcService {
+  rpc CreateTrip(CreateTripGrpcRequest) returns (TripGrpcResponse);
+}
+
+service PaymentGrpcService {
+  rpc AuthorizePayment(PaymentAuthorizationGrpcRequest) returns (PaymentAuthorizationGrpcResponse);
+}
+
+service NotificationGrpcService {
+  rpc SendNotification(NotificationGrpcRequest) returns (NotificationGrpcResponse);
+}
+
+message StopGrpc {
+  double latitude = 1;
+  double longitude = 2;
+  string label = 3;
+}
+
+message NearbyDriversRequest {
+  string tenant_id = 1;
+  string region = 2;
+  double latitude = 3;
+  double longitude = 4;
+  int32 limit = 5;
+}
+
+message DriverCandidateGrpc {
+  string driver_id = 1;
+  string geo_cell = 2;
+  double latitude = 3;
+  double longitude = 4;
+  double distance_km = 5;
+}
+
+message NearbyDriversResponse {
+  repeated DriverCandidateGrpc drivers = 1;
+}
+
+message SurgeDemandRequest {
+  string tenant_id = 1;
+  string region = 2;
+  string geo_cell = 3;
+}
+
+message SurgeQuoteRequest {
+  string tenant_id = 1;
+  string region = 2;
+  string geo_cell = 3;
+}
+
+message SurgeQuoteResponse {
+  string tenant_id = 1;
+  string region = 2;
+  string geo_cell = 3;
+  int32 demand = 4;
+  int32 supply = 5;
+  double multiplier = 6;
+}
+
+message CreateTripGrpcRequest {
+  string tenant_id = 1;
+  string region = 2;
+  string rider_id = 3;
+  string driver_id = 4;
+  StopGrpc pickup = 5;
+  StopGrpc destination = 6;
+  string tier = 7;
+  double surge_multiplier = 8;
+}
+
+message TripGrpcResponse {
+  string trip_id = 1;
+  string tenant_id = 2;
+  string region = 3;
+  string rider_id = 4;
+  string driver_id = 5;
+  string state = 6;
+}
+
+message PaymentAuthorizationGrpcRequest {
+  string idempotency_key = 1;
+  string tenant_id = 2;
+  string rider_id = 3;
+  string payment_method_id = 4;
+  string estimated_amount = 5;
+}
+
+message PaymentAuthorizationGrpcResponse {
+  string authorization_id = 1;
+  string tenant_id = 2;
+  string rider_id = 3;
+  string payment_method_id = 4;
+  string state = 5;
+  string amount = 6;
+  string psp = 7;
+}
+
+message NotificationGrpcRequest {
+  string tenant_id = 1;
+  string recipient_id = 2;
+  string channel = 3;
+  string message = 4;
+}
+
+message NotificationGrpcResponse {
+  string notification_id = 1;
+  string state = 2;
+}
